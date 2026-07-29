@@ -97,7 +97,7 @@ Bundled locally in this repo (not an external install). Copy to your project to 
 
 ```bash
 # 1. Clone
-git clone https://github.com/udaykang-byte/gtm-os-kit.git
+git clone https://github.com/automatewithuday/gtm-os-kit.git
 cd gtm-os-kit
 
 # 2. Copy blueprint to your project
