@@ -10,6 +10,8 @@
 
 **Build your own Company OS with Claude Code.**
 
+Read it as a playbook on the web: [GTM OS Kit](https://martechs.io/playbooks/gtm-os-kit). The full library of 56 installable [GTM skills for Claude Code](https://martechs.io/gtm-skills) lives on the same site.
+
 A Company OS gives Claude persistent context about your business — your tools, processes, voice, and team — so every session starts already knowing who you are. This kit is the starting point: the folder structure, five GTM skills, safety hooks, and a setup guide that takes you from clone to a working system in a single conversation.
 
 Curated and customized by [Uday Kang](https://www.linkedin.com/in/uday-singh-kang/) at **Martechs**. Adapted from the open-source [Company OS Starter Kit](https://github.com/Workflowsio/company-os-starter-kit) by workflows.io.
