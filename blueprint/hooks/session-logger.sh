@@ -10,6 +10,9 @@
 # What gets logged:
 #   - User prompts (truncated to 2000 chars)
 #   - Tool calls (tool name + truncated input)
+#
+# The log can contain anything Claude typed into a tool, including secrets
+# pasted into a command. Keep .claude/sessions/ out of git.
 #   - Tool completions and failures
 #   - Response completions
 #   - Compaction snapshots (stats before context window compresses)
@@ -50,8 +53,11 @@ case "$EVENT" in
 
   # ---- Claude is about to call a tool ----
   PreToolUse)
-    TOOL_INPUT=$(echo "$INPUT" | jq -c '.tool_input // {}' 2>/dev/null | head -c 1000)
-    echo "{\"ts\":\"$TIMESTAMP\",\"event\":\"tool_start\",\"sid\":\"$SESSION_ID\",\"tool\":\"$TOOL_NAME\",\"input\":$TOOL_INPUT}" >> "$TRANSCRIPT"
+    # jq builds the whole line, so a long tool input is cut as a string and
+    # the line stays valid JSON.
+    printf '%s' "$INPUT" | jq -c --arg ts "$TIMESTAMP" \
+      '{ts: $ts, event: "tool_start", sid: (.session_id // "unknown"), tool: (.tool_name // ""), input: ((.tool_input // {}) | tostring | .[0:1000])}' \
+      >> "$TRANSCRIPT" 2>/dev/null
     ;;
 
   # ---- Tool call completed successfully ----
@@ -61,7 +67,7 @@ case "$EVENT" in
 
   # ---- Tool call failed ----
   PostToolUseFailure)
-    STDERR=$(echo "$INPUT" | jq -r '.tool_error // empty' 2>/dev/null | head -c 500)
+    STDERR=$(echo "$INPUT" | jq -r '.error // .tool_error // empty' 2>/dev/null | head -c 500)
     echo "{\"ts\":\"$TIMESTAMP\",\"event\":\"tool_fail\",\"sid\":\"$SESSION_ID\",\"tool\":\"$TOOL_NAME\",\"error\":$(echo "$STDERR" | jq -Rs .)}" >> "$TRANSCRIPT"
     ;;
 

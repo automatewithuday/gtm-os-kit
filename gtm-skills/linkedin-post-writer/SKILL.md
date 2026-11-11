@@ -1,3 +1,8 @@
+---
+name: linkedin-post-writer
+description: "Writes LinkedIn posts in your voice using post frameworks, hook formulas and a scoring rubric. Use when drafting, repurposing or quality-checking a LinkedIn post, or planning a week of posts."
+---
+
 # LinkedIn Post Writer
 
 <!-- 
@@ -5,7 +10,7 @@
   hook patterns, and formatting rules. Covers 7 post types, 12 hook formulas,
   5 CTA patterns, and a scoring rubric to ensure every draft meets a quality bar.
   
-  HOW TO USE: Reference this file in your CLAUDE.md skills section. When you need
+  HOW TO USE: When you need
   a LinkedIn post, tell Claude: "Use the LinkedIn writer skill to draft a post
   about [topic]." Provide your past posts (10+ recommended) so Claude can
   calibrate to your voice. The more examples, the better the voice match.

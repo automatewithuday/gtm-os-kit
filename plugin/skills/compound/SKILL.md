@@ -1,5 +1,5 @@
 ---
-name: workflows:compound
+name: compound
 description: Document a win, process improvement, or playbook discovery to compound your team's knowledge
 argument-hint: "[optional: brief context about the win or discovery]"
 ---
@@ -33,7 +33,7 @@ Phase 1 subagents return TEXT DATA to the orchestrator. They must NOT use Write,
 
 <parallel_tasks>
 
-Launch these subagents IN PARALLEL. Each returns text data to the orchestrator.
+Launch these subagents IN PARALLEL. Each returns text data to the orchestrator. The names are role labels, not installed agents: run each as a `general-purpose` subagent via the Task tool, with the role name and its brief in the prompt.
 
 #### 1. **Context Analyzer**
    - Extracts conversation history and relevant data
@@ -89,7 +89,7 @@ The orchestrating agent (main conversation) performs these steps:
 
 <parallel_tasks>
 
-Based on win type, optionally invoke specialized agents to review the documentation:
+Based on win type, optionally run one more `general-purpose` subagent to review the documentation:
 
 - **campaign win** - verify metrics and attribution
 - **process improvement** - check for automation opportunities
@@ -198,27 +198,6 @@ Launch - Test - Measure - Learn - Document - Replicate - Improve
 
 <manual_override> Use /workflows:compound [context] to document immediately without waiting for auto-detection. </manual_override> </auto_invoke>
 
-## Routes To
-
-`compound-docs` skill
-
-## Applicable Specialized Agents
-
-Based on win type, these agents can enhance documentation:
-
-### Analysis & Validation
-- **pattern-recognition-specialist**: Identifies repeating patterns across client wins
-- **best-practices-researcher**: Enriches with industry benchmarks and context
-
-### Enhancement & Documentation
-- **every-style-editor**: Reviews documentation style and clarity
-
-### When to Invoke
-- **Auto-triggered** (optional): Agents can run post-documentation for enhancement
-- **Manual trigger**: User can invoke agents after /workflows:compound completes for deeper review
-- **Customize agents**: Edit `workflows-engineering.local.md` or invoke the `setup` skill to configure which review agents are used across all workflows
-
 ## Related Commands
 
-- `/research [topic]` - Deep investigation (searches docs/wins/ for patterns)
 - `/workflows:plan` - Planning workflow (references documented wins and playbooks)

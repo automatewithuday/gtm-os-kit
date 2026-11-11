@@ -1,5 +1,9 @@
-# Claude Code local config + session data (runtime, not version controlled)
-.claude/
+# Claude Code: commit .claude/ (settings, hooks, skill links) so the team
+# shares it. Only personal and runtime files stay out.
+.claude/sessions/
+.claude/settings.local.json
+.claude/worktrees/
+CLAUDE.local.md
 
 # Credentials and secrets
 .env

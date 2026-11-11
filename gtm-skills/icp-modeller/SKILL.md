@@ -1,3 +1,8 @@
+---
+name: icp-modeller
+description: "Builds a tiered Ideal Customer Profile matrix scored on firmographic, psychographic and behavioral dimensions. Use when defining, refining or validating an ICP or targeting tiers."
+---
+
 # ICP Modeller
 
 <!-- 
@@ -5,7 +10,7 @@
   psychographic, and behavioral dimensions. Outputs a scored Tier 1/2/3 targeting
   framework with campaign mapping.
   
-  HOW TO USE: Reference this file in your CLAUDE.md skills section. When you need
+  HOW TO USE: When you need
   to define or refine your ICP, tell Claude: "Use the ICP modeller skill to create
   our ICP matrix for [product/segment]." Provide your CRM data, customer list, and
   any campaign history. Claude will walk through each step.

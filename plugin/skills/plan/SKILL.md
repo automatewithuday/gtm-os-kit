@@ -1,5 +1,5 @@
 ---
-name: workflows:plan
+name: plan
 description: Transform project descriptions into well-structured project plans following conventions
 argument-hint: "[project description, campaign brief, or initiative idea]"
 ---
@@ -80,14 +80,14 @@ Refine the idea through collaborative dialogue using the **AskUserQuestion tool*
 First, I need to understand the project's conventions, existing patterns, and any documented learnings. This is fast and local - it informs whether external research is needed.
 </thinking>
 
-Run these agents **in parallel** to gather local context:
+Run these agents **in parallel** to gather local context. The agent names in this command are role labels, not installed agents. Run each one as a `general-purpose` subagent via the Task tool, with the role name and its brief in the prompt.
 
 - Task repo-research-analyst(project_description)
 - Task learnings-researcher(project_description)
 
 **What to look for:**
 - **Repo research:** existing playbooks, CLAUDE.md guidance, past campaign structures, tool preferences, channel strategies
-- **Learnings:** documented solutions in `docs/solutions/` that might apply (gotchas, patterns, lessons learned)
+- **Learnings:** documented wins in `docs/wins/` (written by `/workflows:compound`) that might apply (gotchas, patterns, lessons learned)
 
 These findings inform the next step.
 
@@ -121,7 +121,7 @@ Run these agents in parallel:
 After all research steps complete, consolidate findings:
 
 - Document relevant file paths from repo research (e.g., `playbooks/outbound-sop.md`, `skills/campaign-ops/`)
-- **Include relevant institutional learnings** from `docs/solutions/` (key insights, gotchas to avoid)
+- **Include relevant institutional learnings** from `docs/wins/` (key insights, gotchas to avoid)
 - Note external documentation URLs and best practices (if external research was done)
 - List related past projects or campaigns discovered
 - Capture CLAUDE.md conventions
@@ -158,7 +158,7 @@ Think like a project lead - what would make this plan clear and actionable? Cons
 
 After planning the project structure, run SpecFlow Analyzer to validate and refine the project specification:
 
-- Task workflows-engineering:workflow:spec-flow-analyzer(project_description, research_findings)
+- Task spec-flow-analyzer(project_description, research_findings) - Walks every step of the planned flow end to end and reports gaps, edge cases, missing handoffs, and unclear success criteria
 
 **SpecFlow Analyzer Output:**
 
@@ -533,11 +533,11 @@ Before finalizing, re-read the brainstorm document and verify:
 mkdir -p docs/plans/
 ```
 
-Use the Write tool to save the complete plan to `docs/plans/YYYY-MM-DD-<type>-<descriptive-name>-plan.md`. This step is mandatory and cannot be skipped - even when running as part of LFG/SLFG or other automated pipelines.
+Use the Write tool to save the complete plan to `docs/plans/YYYY-MM-DD-<type>-<descriptive-name>-plan.md`. This step is mandatory and cannot be skipped - even when running as part of `/workflows:swarm` or other automated pipelines.
 
 Confirm: "Plan written to docs/plans/[filename]"
 
-**Pipeline mode:** If invoked from an automated workflow (LFG, SLFG, or any `disable-model-invocation` context), skip all AskUserQuestion calls. Make decisions automatically and proceed to writing the plan without interactive prompts.
+**Pipeline mode:** If invoked from an automated workflow (`/workflows:swarm` or any `disable-model-invocation` context), skip all AskUserQuestion calls. Make decisions automatically and proceed to writing the plan without interactive prompts.
 
 ## Output Format
 
@@ -564,28 +564,26 @@ After writing the plan file, use the **AskUserQuestion tool** to present these o
 
 **Options:**
 1. **Open plan in editor** - Open the plan file for review
-2. **Run `/deepen-plan`** - Enhance each section with parallel research agents (best practices, benchmarks, examples)
-3. **Run `/technical_review`** - Structured feedback from multiple review perspectives
-4. **Review and refine** - Improve the document through structured self-review
-5. **Start `/workflows:work`** - Begin executing this plan
-6. **Start `/workflows:work` on remote** - Begin executing in Claude Code on the web (use `&` to run in background)
-7. **Create Issue** - Create issue in project tracker (GitHub/Linear)
+2. **Review and refine** - Improve the document through structured self-review
+3. **Run `/workflows:review`** - Structured feedback from multiple review perspectives
+4. **Start `/workflows:work`** - Begin executing this plan
+5. **Start `/workflows:work` on remote** - Begin executing in Claude Code on the web (use `&` to run in background)
+6. **Create Issue** - Create issue in project tracker (GitHub/Linear)
 
 Based on selection:
 - **Open plan in editor** - Run `open docs/plans/<plan_filename>.md` to open the file in the user's default editor
-- **`/deepen-plan`** - Call the /deepen-plan command with the plan file path to enhance with research
-- **`/technical_review`** - Call the /technical_review command with the plan file path
-- **Review and refine** - Load `document-review` skill.
+- **Review and refine** - Re-read the document once as its intended reader. Fix unclear wording, gaps, contradictions and unsupported claims, then summarise what changed.
+- **`/workflows:review`** - Call the /workflows:review command with the plan file path
 - **`/workflows:work`** - Call the /workflows:work command with the plan file path
 - **`/workflows:work` on remote** - Run `/workflows:work docs/plans/<plan_filename>.md &` to start work in background for Claude Code web
 - **Create Issue** - See "Issue Creation" section below
 - **Other** (automatically provided) - Accept free text for rework or specific changes
 
-**Note:** If running `/workflows:plan` with ultrathink enabled, automatically run `/deepen-plan` after plan creation for maximum depth and grounding.
-
-Loop back to options after Simplify or Other changes until user selects `/workflows:work` or `/technical_review`.
+Loop back to options after Review and refine or Other changes until user selects `/workflows:work` or `/workflows:review`.
 
 ## Issue Creation
+
+Creating an issue posts outside this repo. Only do it when the user picked "Create Issue", and show them the title and target tracker for a yes before running the command.
 
 When user selects "Create Issue", detect their project tracker from CLAUDE.md:
 
@@ -613,6 +611,6 @@ When user selects "Create Issue", detect their project tracker from CLAUDE.md:
 
 5. **After creation:**
    - Display the issue URL
-   - Ask if they want to proceed to `/workflows:work` or `/technical_review`
+   - Ask if they want to proceed to `/workflows:work` or `/workflows:review`
 
 NEVER EXECUTE! Just research and write the plan.

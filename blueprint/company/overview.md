@@ -1,15 +1,16 @@
 # Company Overview
 
-<!-- CLAUDE.md has your identity summary (name, mission, team size).
+<!-- AGENTS.md has your identity summary (name, mission, team size).
      This file goes deeper. Product details, ICP, positioning, metrics,
-     competitive landscape. Things too detailed for CLAUDE.md but
-     important for Claude to know when doing real work.
+     competitive landscape. Things too detailed for AGENTS.md but
+     important for an agent to know when doing real work.
 
-     CLAUDE.md references this file with: @company/overview.md -->
+     AGENTS.md tells every agent to read this file before any GTM task.
+     Prices and approved proof live in company/offers.md. -->
 
 ## What We Sell
 
-{{Detailed description of your product/service. Not the one-liner from CLAUDE.md,
+{{Detailed description of your product/service. Not the one-liner from AGENTS.md,
 but the full picture. What problems do you solve? How does it work? What makes
 you different?}}
 

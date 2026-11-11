@@ -1,3 +1,8 @@
+---
+name: discovery-prep
+description: "Builds a pre-call briefing doc for a sales meeting: company and prospect research, recent signals, pain hypotheses, talking points and objection handling. Use when prepping for a discovery, demo, follow-up or renewal call."
+---
+
 # Discovery Prep
 
 <!-- 
@@ -6,7 +11,7 @@
   pain hypotheses, talking points, and objection handling. Outputs a one-pager your
   rep can scan in 5 minutes before the call.
   
-  HOW TO USE: Reference this file in your CLAUDE.md skills section. Tell Claude:
+  HOW TO USE: Tell Claude:
   "Use the sales call prep skill to build a briefing doc for my meeting with
   [prospect name] at [company]." Provide the prospect's name, title, company,
   and any context you already have (how they entered the pipeline, email thread, etc.).
