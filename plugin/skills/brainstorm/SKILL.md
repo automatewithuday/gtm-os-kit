@@ -1,5 +1,5 @@
 ---
-name: workflows:brainstorm
+name: brainstorm
 description: Explore GTM strategies and business approaches through collaborative dialogue before execution
 argument-hint: "[campaign idea, market entry, positioning challenge, or growth opportunity]"
 ---
@@ -9,8 +9,6 @@ argument-hint: "[campaign idea, market entry, positioning challenge, or growth o
 **Note: The current year is 2026.** Use this when dating brainstorm documents.
 
 Brainstorming helps answer **WHAT** to pursue through collaborative dialogue. It precedes `/workflows:plan`, which answers **HOW** to execute it.
-
-**Process knowledge:** Load the `brainstorming` skill for detailed question techniques, approach exploration patterns, and prioritization principles.
 
 ## Topic Description
 
@@ -43,13 +41,15 @@ Run a quick scan to understand existing context:
 
 - Task repo-research-analyst("Understand existing context related to: <topic_description>")
 
+`repo-research-analyst` is a role label, not an installed agent. Run it as a `general-purpose` subagent via the Task tool, with the role name and this brief in the prompt.
+
 Focus on: similar campaigns run before, established playbooks, client history, CLAUDE.md guidance.
 
 #### 1.2 Collaborative Dialogue
 
 Use the **AskUserQuestion tool** to ask questions **one at a time**.
 
-**Guidelines (see `brainstorming` skill for detailed techniques):**
+**Guidelines:**
 - Prefer multiple choice when natural options exist
 - Start broad (goal, audience, positioning) then narrow (channels, budget, timeline, constraints)
 - Validate assumptions explicitly
@@ -128,9 +128,9 @@ Use **AskUserQuestion tool** to present next steps:
 
 **If user selects "Review and refine":**
 
-Load the `document-review` skill and apply it to the brainstorm document.
+Re-read the document once as its intended reader. Fix unclear wording, gaps, contradictions and unsupported claims, then summarise what changed.
 
-When document-review returns "Review complete", present next steps:
+Then present next steps:
 
 1. **Move to planning** - Continue to `/workflows:plan` with this document
 2. **Done for now** - Brainstorming complete. To start planning later: `/workflows:plan [document-path]`

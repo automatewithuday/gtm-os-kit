@@ -1,5 +1,5 @@
 ---
-name: workflows:review
+name: review
 description: Perform exhaustive deliverable reviews using multi-agent analysis, ultra-thinking, and isolated workspaces
 argument-hint: "[deliverable path, PR number, GitHub URL, or latest]"
 ---
@@ -38,7 +38,7 @@ First, I need to determine the review target type and set up the deliverable for
 - [ ] Determine review type: PR number (numeric), GitHub URL, file path (.md), or empty (current branch)
 - [ ] Check current git branch
 - [ ] If ALREADY on the target branch (PR branch, requested branch name, or the branch already checked out for review) - proceed with analysis on current branch
-- [ ] If DIFFERENT branch than the review target - offer to use worktree: "Use git-worktree skill for isolated review." Call `skill: git-worktree` with branch name
+- [ ] If DIFFERENT branch than the review target - offer an isolated worktree for the review: `git worktree add ../review-<branch> <branch>`, then work from that folder
 - [ ] Fetch PR metadata using `gh pr view --json` for title, body, files, linked issues
 - [ ] Identify the type of deliverable: campaign copy, proposal, playbook, SOP, client report, content piece, automation config, etc.
 - [ ] Prepare context: who is the audience, what is the goal, what brand standards apply
@@ -51,31 +51,21 @@ Ensure that the deliverable is ready for analysis (either in worktree or on curr
 #### Protected Artifacts
 
 <protected_artifacts>
-The following paths are workflows-engineering pipeline artifacts and must never be flagged for deletion, removal, or gitignore by any review agent:
+The following paths are workflow pipeline artifacts and must never be flagged for deletion, removal, or gitignore by any review agent:
 
 - `docs/plans/*.md` - Plan files created by `/workflows:plan`. These are living documents that track implementation progress (checkboxes are checked off by `/workflows:work`).
-- `docs/solutions/*.md` - Solution documents created during the pipeline.
+- `docs/wins/**/*.md` - Win documents created by `/workflows:compound`. `/workflows:plan` reads them as learnings.
 
 If a review agent flags any file in these directories for cleanup or removal, discard that finding during synthesis. Do not create a todo for it.
 </protected_artifacts>
-
-#### Load Review Agents
-
-Read `workflows-engineering.local.md` in the project root. If found, use `review_agents` from YAML frontmatter. If the markdown body contains review context, pass it to each agent as additional instructions.
-
-If no settings file exists, invoke the `setup` skill to create one. Then read the newly created file and continue.
 
 #### Parallel Agents to review the deliverable:
 
 <parallel_tasks>
 
-Run all configured review agents in parallel using Task tool. For each agent in the `review_agents` list:
+The agent names in this command are role labels, not installed agents. Run each one as a `general-purpose` subagent via the Task tool, with the role name and its brief in the prompt, and pass it the deliverable content plus the audience, goal, and brand standards gathered above.
 
-```
-Task {agent-name}(Deliverable content + review context from settings body)
-```
-
-Additionally, always run these four core review agents regardless of settings:
+Always run these four core review agents in parallel:
 
 - Task strategy-reviewer(Deliverable content) - Does this align with the stated goal, ICP, and GTM strategy? Are the assumptions sound? Is the approach differentiated?
 - Task quality-reviewer(Deliverable content) - Is the output polished, complete, and professional? Are there errors, inconsistencies, or gaps? Does it meet the bar for client-facing work?
@@ -216,11 +206,11 @@ Complete deliverable context map with audience, goal, and component interactions
 
 ### 4. Clarity and Simplification Review
 
-Run the Task deliverable-clarity-reviewer() to check if we can make the output clearer, more concise, and more actionable.
+Run Task deliverable-clarity-reviewer(Deliverable content) to check if we can make the output clearer, more concise, and more actionable.
 
-### 5. Findings Synthesis and Todo Creation Using file-todos Skill
+### 5. Findings Synthesis and Todo Creation
 
-<critical_requirement> ALL findings MUST be stored in the todos/ directory using the file-todos skill. Create todo files immediately after synthesis - do NOT present findings for user approval first. Use the skill for structured todo management. </critical_requirement>
+<critical_requirement> ALL findings MUST be stored as markdown files in the todos/ directory, using the structure and naming convention below. Create todo files immediately after synthesis - do NOT present findings for user approval first. </critical_requirement>
 
 #### Step 1: Synthesize All Findings
 
@@ -232,7 +222,7 @@ Remove duplicates, prioritize by severity and impact.
 <synthesis_tasks>
 
 - [ ] Collect findings from all parallel agents
-- [ ] Discard any findings that recommend deleting or gitignoring files in `docs/plans/` or `docs/solutions/` (see Protected Artifacts above)
+- [ ] Discard any findings that recommend deleting or gitignoring files in `docs/plans/` or `docs/wins/` (see Protected Artifacts above)
 - [ ] Categorize by type: strategy, effectiveness, brand/voice, clarity, compliance, risk, quality
 - [ ] Assign severity levels: P1 CRITICAL, P2 IMPORTANT, P3 NICE-TO-HAVE
 - [ ] Remove duplicate or overlapping findings
@@ -240,49 +230,13 @@ Remove duplicates, prioritize by severity and impact.
 
 </synthesis_tasks>
 
-#### Step 2: Create Todo Files Using file-todos Skill
+#### Step 2: Create Todo Files
 
-<critical_instruction> Use the file-todos skill to create todo files for ALL findings immediately. Do NOT present findings one-by-one asking for user approval. Create all todo files in parallel using the skill, then summarize results to user. </critical_instruction>
+<critical_instruction> Create todo files for ALL findings immediately with the Write tool. Do NOT present findings one-by-one asking for user approval. Create all todo files in parallel, then summarize results to user. </critical_instruction>
 
-**Implementation Options:**
+1. Create the directory if needed: `mkdir -p todos/`
 
-**Option A: Direct File Creation (Fast)**
-
-- Create todo files directly using Write tool
-- All findings in parallel for speed
-- Use standard template from `.claude/skills/file-todos/assets/todo-template.md`
-- Follow naming convention: `{issue_id}-pending-{priority}-{description}.md`
-
-**Option B: Sub-Agents in Parallel (Recommended for Scale)** For large deliverables with 15+ findings, use sub-agents to create finding files in parallel:
-
-```bash
-# Launch multiple finding-creator agents in parallel
-Task() - Create todos for first finding
-Task() - Create todos for second finding
-Task() - Create todos for third finding
-etc. for each finding.
-```
-
-Sub-agents can:
-
-- Process multiple findings simultaneously
-- Write detailed todo files with all sections filled
-- Organize findings by severity
-- Create detailed Proposed Solutions
-- Add acceptance criteria and work logs
-- Complete much faster than sequential processing
-
-**Execution Strategy:**
-
-1. Synthesize all findings into categories (P1/P2/P3)
-2. Group findings by severity
-3. Launch 3 parallel sub-agents (one per severity level)
-4. Each sub-agent creates its batch of todos using the file-todos skill
-5. Consolidate results and present summary
-
-**Process (Using file-todos Skill):**
-
-1. For each finding:
+2. For each finding:
 
    - Determine severity (P1/P2/P3)
    - Write detailed Problem Statement and Findings
@@ -290,23 +244,10 @@ Sub-agents can:
    - Estimate effort (Small/Medium/Large)
    - Add acceptance criteria and work log
 
-2. Use file-todos skill for structured todo management:
+3. Write one file per finding, numbered from the highest existing `issue_id` in `todos/`:
 
-   ```bash
-   skill: file-todos
    ```
-
-   The skill provides:
-
-   - Template location: `.claude/skills/file-todos/assets/todo-template.md`
-   - Naming convention: `{issue_id}-{status}-{priority}-{description}.md`
-   - YAML frontmatter structure: status, priority, issue_id, tags, dependencies
-   - All required sections: Problem Statement, Findings, Solutions, etc.
-
-3. Create todo files in parallel:
-
-   ```bash
-   {next_id}-pending-{priority}-{description}.md
+   todos/{next_id}-pending-{priority}-{description}.md
    ```
 
 4. Examples:
@@ -318,9 +259,9 @@ Sub-agents can:
    004-pending-p3-redundant-section.md
    ```
 
-5. Follow template structure from file-todos skill: `.claude/skills/file-todos/assets/todo-template.md`
+**For large deliverables with 15+ findings**, group the findings by severity and launch 3 parallel `general-purpose` subagents (one per severity level). Give each its findings, an `issue_id` range, and the structure below, then consolidate the results.
 
-**Todo File Structure (from template):**
+**Todo File Structure:**
 
 Each todo must include:
 
@@ -411,15 +352,13 @@ After creating all todo files, present full summary:
 2. **Triage All Todos**:
    ```bash
    ls todos/*-pending-*.md  # View all pending todos
-   /triage                  # Use slash command for interactive triage
    ```
+   Go through them with the user one at a time: approve (rename `pending` to `ready`), defer, or drop.
 ````
 
 3. **Work on Approved Todos**:
 
-   ```bash
-   /resolve_todo_parallel  # Fix all approved items efficiently
-   ```
+   Fix each `ready` todo in the deliverable. Independent todos can be fixed in parallel by `general-purpose` subagents, one per todo.
 
 4. **Track Progress**:
    - Rename file when status changes: pending - ready - complete
@@ -455,4 +394,3 @@ After creating all todo files, present full summary:
 ### Important: P1 Findings Block Delivery
 
 Any **P1 (CRITICAL)** findings must be addressed before the deliverable is sent, published, or delivered to a client. Present these prominently and ensure they are resolved first.
-```

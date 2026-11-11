@@ -1,5 +1,5 @@
 ---
-name: workflows:work
+name: work
 description: Execute work plans efficiently while maintaining quality and shipping deliverables
 argument-hint: "[plan file, specification, or todo file path]"
 ---
@@ -58,8 +58,9 @@ This command takes a work document (plan, specification, or todo file) and execu
 
    **Option B: Use a worktree (recommended for parallel workstreams)**
    ```bash
-   skill: git-worktree
-   # The skill will create a new branch from the default branch in an isolated worktree
+   # Creates a new branch from the default branch in an isolated folder next to the repo
+   git worktree add -b feature-branch-name ../feature-branch-name [default_branch]
+   cd ../feature-branch-name
    ```
 
    **Option C: Continue on the default branch**
@@ -163,7 +164,7 @@ This command takes a work document (plan, specification, or todo file) and execu
    For work with Figma designs or visual assets:
 
    - Produce deliverables following design specs
-   - Use figma-design-sync agent iteratively to compare
+   - Compare the output against the design spec side by side
    - Fix visual differences identified
    - Repeat until output matches design
 
@@ -187,9 +188,7 @@ This command takes a work document (plan, specification, or todo file) and execu
 
 2. **Consider Reviewer Agents** (Optional)
 
-   Use for complex, high-stakes, or large deliverables. Read agents from `workflows-engineering.local.md` frontmatter (`review_agents`). If no settings file, invoke the `setup` skill to create one.
-
-   Run configured agents in parallel with Task tool. Present findings and address critical issues.
+   Use for complex, high-stakes, or large deliverables. Run `/workflows:review` on the deliverable. It runs the reviewer roles in parallel as `general-purpose` subagents. Present findings and address critical issues.
 
 3. **Final Validation**
    - All TodoWrite tasks marked completed
@@ -230,39 +229,9 @@ This command takes a work document (plan, specification, or todo file) and execu
    )"
    ```
 
-2. **Capture and Upload Screenshots for Visual Deliverables** (REQUIRED for any visual work)
+2. **Create Review Cycle**
 
-   For **any** design changes, landing pages, email templates, or visual assets, you MUST capture and upload screenshots:
-
-   **Step 1: Start dev server** (if not running)
-   ```bash
-   bin/dev  # Run in background
-   ```
-
-   **Step 2: Capture screenshots with agent-browser CLI**
-   ```bash
-   agent-browser open http://localhost:3000/[route]
-   agent-browser snapshot -i
-   agent-browser screenshot output.png
-   ```
-   See the `agent-browser` skill for detailed usage.
-
-   **Step 3: Upload using imgup skill**
-   ```bash
-   skill: imgup
-   # Then upload each screenshot:
-   imgup -h pixhost screenshot.png  # pixhost works without API key
-   # Alternative hosts: catbox, imagebin, beeimg
-   ```
-
-   **What to capture:**
-   - **New deliverables**: Screenshot of the finished output
-   - **Revised deliverables**: Before AND after screenshots
-   - **Design implementation**: Screenshot showing Figma design match
-
-   **IMPORTANT**: Always include uploaded image URLs in the review description. This provides visual context for reviewers and documents the deliverable.
-
-3. **Create Review Cycle**
+   Pushing and opening a PR leave this machine. **Ask the user first**: show the branch name, the remote, and the PR title, and run the commands below only after an explicit yes. If the answer is no, stop after the local commit and say where the work is.
 
    ```bash
    git push -u origin feature-branch-name
@@ -293,11 +262,6 @@ This command takes a work document (plan, specification, or todo file) and execu
    - **If no live impact**
      - `No additional monitoring required: <reason>`
 
-   ## Before / After Screenshots
-   | Before | After |
-   |--------|-------|
-   | ![before](URL) | ![after](URL) |
-
    ## Design Reference
    [Link if applicable]
 
@@ -308,14 +272,14 @@ This command takes a work document (plan, specification, or todo file) and execu
    )"
    ```
 
-4. **Update Plan Status**
+3. **Update Plan Status**
 
    If the input document has YAML frontmatter with a `status` field, update it to `completed`:
    ```
    status: active  ->  status: completed
    ```
 
-5. **Notify User**
+4. **Notify User**
    - Summarize what was completed
    - Link to review cycle
    - Note any follow-up work needed
@@ -347,6 +311,8 @@ Or explicitly request: "Use swarm mode for this work"
 ### Swarm Workflow
 
 When swarm mode is enabled, the workflow changes:
+
+If the `Teammate` tool is not available in this session, skip steps 1 and 5 and launch the workers in step 3 as plain parallel `general-purpose` Task subagents.
 
 1. **Create Team**
    ```
@@ -388,8 +354,6 @@ When swarm mode is enabled, the workflow changes:
    Teammate({ operation: "requestShutdown", target_agent_id: "reviewer" })
    Teammate({ operation: "cleanup" })
    ```
-
-See the `orchestrating-swarms` skill for detailed swarm patterns and best practices.
 
 ---
 
@@ -437,10 +401,10 @@ Before creating the review cycle, verify:
 - [ ] Target audience and ICP alignment confirmed
 - [ ] Data and claims verified for accuracy
 - [ ] Design assets match (if applicable)
-- [ ] Before/after screenshots captured and uploaded (for visual work)
 - [ ] Commit messages follow conventional format
 - [ ] Review description includes Post-Launch Monitoring & Validation section (or explicit no-impact rationale)
-- [ ] Review description includes summary, verification notes, and screenshots
+- [ ] Review description includes summary and verification notes
+- [ ] User approved the push and PR before they ran
 - [ ] Review description includes Company OS badge
 
 ## When to Use Reviewer Agents

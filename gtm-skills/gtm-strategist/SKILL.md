@@ -1,3 +1,8 @@
+---
+name: gtm-strategist
+description: "Designs or audits a B2B go-to-market motion: stack layers, tool selection, channel strategy, budget allocation and metrics. Use when planning a GTM motion, auditing a stack or choosing channels."
+---
+
 # GTM Strategist
 
 <!-- 
@@ -6,7 +11,7 @@
   budget allocation, and the metrics that actually matter. Works for any B2B company
   at any stage.
   
-  HOW TO USE: Reference this file in your CLAUDE.md skills section. Tell Claude:
+  HOW TO USE: Tell Claude:
   "Use the GTM strategist skill to [design our GTM motion / audit our current
   stack / plan our channel strategy]." Provide your ICP, current tools, budget,
   team size, and any existing performance data.

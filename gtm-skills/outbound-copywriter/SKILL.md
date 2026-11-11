@@ -1,3 +1,8 @@
+---
+name: outbound-copywriter
+description: "Writes cold email sequences with the SPARK framework: subject lines, openers, follow-ups, a QA checklist and an A/B test plan. Use when writing, rewriting or reviewing cold outbound email copy."
+---
+
 # Outbound Copywriter
 
 <!-- 
@@ -6,7 +11,7 @@
   full follow-up sequence engine. Includes subject line formulas, QA checklist,
   A/B testing protocol, and a self-improvement feedback loop.
   
-  HOW TO USE: Reference this file in your CLAUDE.md skills section. When you need
+  HOW TO USE: When you need
   cold email copy, tell Claude: "Use the cold email writer skill to write copy for
   [campaign/segment]." Provide your value prop, target persona, proof points, and
   any past campaign data. Claude will select the right archetype and write the sequence.

@@ -60,10 +60,12 @@ esac
 
 # ---- macOS notification via osascript ----
 if command -v osascript &>/dev/null; then
+  # Message and title go in as arguments, so quotes in them cannot break
+  # (or inject into) the AppleScript.
   if [ -n "$SOUND" ]; then
-    osascript -e "display notification \"$MESSAGE\" with title \"$TITLE\" sound name \"$SOUND\"" 2>/dev/null
+    osascript -e 'on run argv' -e 'display notification (item 1 of argv) with title (item 2 of argv) sound name (item 3 of argv)' -e 'end run' "$MESSAGE" "$TITLE" "$SOUND" 2>/dev/null
   else
-    osascript -e "display notification \"$MESSAGE\" with title \"$TITLE\"" 2>/dev/null
+    osascript -e 'on run argv' -e 'display notification (item 1 of argv) with title (item 2 of argv)' -e 'end run' "$MESSAGE" "$TITLE" 2>/dev/null
   fi
 
 # ---- Linux notification via notify-send ----

@@ -1,0 +1,14 @@
+{
+  "name": "gtm-os-kit",
+  "description": "GTM OS Kit by Martechs: workflow commands for planning, doing and reviewing GTM work",
+  "owner": {
+    "name": "Uday Kang (Martechs)"
+  },
+  "plugins": [
+    {
+      "name": "workflows",
+      "source": "./plugin",
+      "description": "Structured workflow commands for planning, building, and reviewing work. Built on Compound Engineering by EveryInc."
+    }
+  ]
+}
