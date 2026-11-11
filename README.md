@@ -26,6 +26,19 @@ At the center is `AGENTS.md`, the front page every agent reads on load. Codex an
 
 ---
 
+## Repo Layout
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/repo-layout-dark.png">
+  <img src="assets/repo-layout-light.png" width="820" alt="Folder tree of the gtm-os-kit repo. At the root: AGENTS.md, the front page every agent reads, and CLAUDE.md, which imports it for Claude Code. blueprint/ is your Company OS to copy into your project: INDEX.md, company/ (overview, offers, rules, voice, team, accounts, gtm-stack, design-system), past-campaigns/, wiki/, hooks/, raw/ and archive/. gtm-skills/ holds one folder for each of the 6 skills. plugin/ holds the /workflows commands. .claude/skills/ and .agents/skills/ link the skills into Claude Code and Codex. .claude-plugin/ makes the plugin installable from GitHub.">
+</picture>
+
+`blueprint/` is the part you copy into your own project and fill in. Start with `AGENTS.md` + `company/overview.md`. Add more as you go. A Company OS with 5 solid files beats one with 50 scattered files.
+
+Every file is listed with what it does in the next section.
+
+---
+
 ## What's in the Kit
 
 ### Root
@@ -186,23 +199,6 @@ Skills are reusable instruction sets that tell Claude HOW to do specific tasks. 
 Run one by name (`/outbound-copywriter` in Claude Code, `$outbound-copywriter` in Codex) or just ask for the job.
 
 These six are GTM-focused starters. The skill format works for any domain. Create skills for engineering, support, finance, HR, product - whatever your team does.
-
----
-
-## The Blueprint
-
-The `blueprint/` folder is the recommended structure for your Company OS. Copy it to your project and fill it in.
-
-| Folder | Purpose |
-|--------|---------|
-| `company/` | Core context that rarely changes. Identity, team, brand, stack. Start here. |
-| `wiki/` | Reference docs, playbooks, SOPs. Things your team looks up. Grows over time. |
-| `past-campaigns/` | One file per finished campaign, with its results. The memory the next campaign starts from. |
-| `hooks/` | Safety guard, session logger, notifications. Set up once, forget about it. |
-| `archive/` | Completed projects, old docs. Kept for reference but not loaded by default. |
-| `raw/` | Unprocessed inputs. Call transcripts, data exports, articles. Let Claude organize them into wiki/ pages. |
-
-Start with `AGENTS.md` + `company/overview.md`. Add more as you go. A Company OS with 5 solid files beats one with 50 scattered files.
 
 ---
 
